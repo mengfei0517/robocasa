@@ -199,7 +199,7 @@ main_group:
         fixture: counter_1_right
         sample_region_kwargs:
           ref: shelves
-        size: [0.40, 0.40]
+        size: [1.0, 0.40]
         pos: [null, 1.0]
         rotation: [0, 0]
 
@@ -210,7 +210,7 @@ main_group:
         fixture: counter_main
         sample_region_kwargs:
           ref: cab_main
-        size: [0.30, 0.30]
+        size: [1.0, 0.30]
         pos: [null, 1.0]
 
 # fixtures on the left wall
@@ -388,7 +388,7 @@ left_group:
         sample_region_kwargs:
           ref: sink
           loc: right
-        size: [0.52, 0.52]
+        size: [1.0, 0.52]
         pos: [null, 1.0]
         rotation: [0, 0]
         margin: 0.0
@@ -401,7 +401,7 @@ left_group:
         sample_region_kwargs:
           ref: sink
           loc: "left"
-        size: [0.30, 0.30]
+        size: [1.0, 0.30]
         pos: [null, 1.0]
         rotation: [0, 0]
 

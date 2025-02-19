@@ -287,6 +287,9 @@ from robocasa.environments.kitchen.single_stage.kitchen_stove import (
     TurnOnStove,
 )
 
+from robocasa.environments.kitchen.single_stage._basicEnv_chef import BasicEnvChef
+
+
 try:
     import mimicgen
 except ImportError:

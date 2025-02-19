@@ -21,7 +21,6 @@ from robocasa.utils.object_utils import (
     get_fixture_to_point_rel_offset,
     set_geom_dimensions,
 )
-import random  # 添加这个导入
 
 
 class Cabinet(ProcGenFixture):
@@ -589,10 +588,6 @@ class HingeCabinet(Cabinet):
         return "{}_right_door_handle_handle".format(self.name)
 
 
-# 在类外部定义常量
-SHELF_SECTIONS = ["section_1", "section_2", "section_3", "section_4"]
-
-
 class OpenCabinet(Cabinet):
     """
     Creates a OpenCabinet object which is a cabinet with open shelves
@@ -612,7 +607,6 @@ class OpenCabinet(Cabinet):
     ):
         self.num_shelves = num_shelves
         self.shelves = list()
-        self.shelf_z_positions = None
         super().__init__(
             xml="fixtures/cabinets/cabinet_open.xml",
             name=name,
@@ -639,19 +633,18 @@ class OpenCabinet(Cabinet):
         x, y, z = self.size
         th = self.thickness
 
-        # 计算并存储架子的z坐标
-        self.shelf_z_positions = (
+        shelf_size = [x, y, th]
+        # evenly spaced, taking thickness into account
+        shelf_z_positions = (
             np.linspace(
                 start=th / 2, stop=z - th / 2, num=self.num_shelves, endpoint=False
             )
             - z / 2
         )
 
-        shelf_size = [x, y, th]
-
-        # 创建架子
+        # create and position shelves
         for i in range(self.num_shelves):
-            shelf_pos = [0, 0, self.shelf_z_positions[i]]
+            shelf_pos = [0, 0, shelf_z_positions[i]]
             shelf = CabinetShelf(
                 size=shelf_size,
                 pos=shelf_pos,
@@ -677,59 +670,6 @@ class OpenCabinet(Cabinet):
                 "int_pz": [-x + th * 2, -y + th * 2, z - th * 2],
             }
         )
-
-    def get_reset_regions(self, env):
-        """获取所有架子的重置区域"""
-        x, y, z = self.size
-        th = self.thickness
-
-        # 计算每个区域的宽度
-        section_width = (x - 2 * th) / len(SHELF_SECTIONS)
-
-        regions = {}
-        # 为每个架子的每个区域创建放置区域
-        for i, z_pos in enumerate(self.shelf_z_positions):
-            for j, section in enumerate(SHELF_SECTIONS):
-                # 计算x位置：从左到右
-                x_offset = -x / 2 + th + (j * section_width) + (section_width / 2)
-
-                regions[f"shelf_{i}_{section}"] = {
-                    "offset": (x_offset, 0, z_pos + th),
-                    "size": (section_width * 0.8, y - 2 * th),
-                }
-
-        return regions
-
-    def sample_reset_region(self, env, shelf_index=None, **kwargs):
-        """采样一个重置区域"""
-        regions = self.get_reset_regions(env)
-
-        # 检查kwargs的结构
-        if "sample_region_kwargs" in kwargs:
-            # print(f"Debug - Found sample_region_kwargs: {kwargs['sample_region_kwargs']}")
-            region_kwargs = kwargs["sample_region_kwargs"]
-            shelf_index = region_kwargs.get("shelf_index", 0)
-            section = region_kwargs.get("section", "section_1")
-        elif "section" in kwargs:  # 添加这个分支来处理直接的section参数
-            # print(f"Debug - Found direct section: {kwargs['section']}")
-            shelf_index = kwargs.get("shelf_index", 0)
-            section = kwargs["section"]
-        else:
-            # print("Debug - No section information found, using defaults")
-            shelf_index = shelf_index if shelf_index is not None else 0
-            section = "section_1"
-
-        # print(f"Debug - Using shelf_index: {shelf_index}, section: {section}")
-
-        # 构建区域键
-        region_key = f"shelf_{shelf_index}_{section}"
-
-        if region_key in regions:
-            # print(f"Debug - Using region: {region_key}")
-            return regions[region_key]
-
-        print(f"Debug - Region {region_key} not found, using default")
-        return regions["shelf_0_section_1"]
 
     @property
     def nat_lang(self):
