@@ -187,7 +187,7 @@ main_group:
       stack_height: 0.92
       stack_fixtures: ["microwave"]
 
-    - name: shelves
+    - name: cab_3
       type: open_cabinet
       default_config_name: shelves
       num_shelves: 3

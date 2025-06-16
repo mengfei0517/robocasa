@@ -172,7 +172,7 @@ def playback_dataset(dataset, args):
     demos = [demos[i] for i in inds]
 
     if args.demo_key is not None:
-        demos = [demo_key]
+        demos = [f"demo_{args.demo_key}"]
 
     for ind in range(len(demos)):
         ep = demos[ind]
